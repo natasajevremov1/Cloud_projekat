@@ -1,0 +1,153 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{10E01DE9-4189-4659-87CB-D998B0EC4D94}|HealthMonitoringService\\HealthMonitoringService.ccproj|C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{10E01DE9-4189-4659-87CB-D998B0EC4D94}|HealthMonitoringService\\HealthMonitoringService.ccproj|solutionrelative:HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10E01DE9-4189-4659-87CB-D998B0EC4D94}|HealthMonitoringService\\HealthMonitoringService.ccproj|C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringS\\HealthMonitoringS.csproj||{C1C21263-6FDE-4EC2-9D4C-2B238680F849}",
+      "RelativeMoniker": "D:0:0:{10E01DE9-4189-4659-87CB-D998B0EC4D94}|HealthMonitoringService\\HealthMonitoringService.ccproj|solutionrelative:HealthMonitoringS\\HealthMonitoringS.csproj||{C1C21263-6FDE-4EC2-9D4C-2B238680F849}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{72277FB1-5892-4FC8-832E-921C9D32C5C7}|HealthMonitoringS\\HealthMonitoringS.csproj|c:\\users\\win10\\source\\repos\\stackoverflow\\healthmonitorings\\workerrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72277FB1-5892-4FC8-832E-921C9D32C5C7}|HealthMonitoringS\\HealthMonitoringS.csproj|solutionrelative:healthmonitorings\\workerrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BD0C258-B064-43D2-BBFD-BCE0674303F0}|NotificationS\\NotificationS.csproj|c:\\users\\win10\\source\\repos\\stackoverflow\\notifications\\workerrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2BD0C258-B064-43D2-BBFD-BCE0674303F0}|NotificationS\\NotificationS.csproj|solutionrelative:notifications\\workerrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Cloud.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|solutionrelative:NotificationService\\ServiceConfiguration.Cloud.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Local.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|solutionrelative:NotificationService\\ServiceConfiguration.Local.cscfg||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceDefinition.csdef||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}|NotificationService\\NotificationService.ccproj|solutionrelative:NotificationService\\ServiceDefinition.csdef||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}|AdminToolsConsoleApp\\AdminToolsConsoleApp.csproj|c:\\users\\win10\\source\\repos\\stackoverflow\\admintoolsconsoleapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}|AdminToolsConsoleApp\\AdminToolsConsoleApp.csproj|solutionrelative:admintoolsconsoleapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ServiceConfiguration.Cloud.cscfg",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg",
+              "RelativeDocumentMoniker": "HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg",
+              "RelativeToolTip": "HealthMonitoringService\\ServiceConfiguration.Cloud.cscfg",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-08-18T10:51:57.567Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HealthMonitoringS [Role]",
+              "DocumentMoniker": "WindowsAzure: HealthMonitoringService.HealthMonitoringS",
+              "ToolTip": "WindowsAzure: HealthMonitoringService.HealthMonitoringS [Role]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-08-18T10:51:47.579Z",
+              "EditorCaption": " [Role]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "WorkerRole.cs",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringS\\WorkerRole.cs",
+              "RelativeDocumentMoniker": "HealthMonitoringS\\WorkerRole.cs",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\HealthMonitoringS\\WorkerRole.cs",
+              "RelativeToolTip": "HealthMonitoringS\\WorkerRole.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-18T10:51:07.491Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ServiceDefinition.csdef",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceDefinition.csdef",
+              "RelativeDocumentMoniker": "NotificationService\\ServiceDefinition.csdef",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceDefinition.csdef",
+              "RelativeToolTip": "NotificationService\\ServiceDefinition.csdef",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000773|",
+              "WhenOpened": "2025-08-18T10:48:32.375Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ServiceConfiguration.Local.cscfg",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Local.cscfg",
+              "RelativeDocumentMoniker": "NotificationService\\ServiceConfiguration.Local.cscfg",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Local.cscfg",
+              "RelativeToolTip": "NotificationService\\ServiceConfiguration.Local.cscfg",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-08-18T10:48:19.569Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ServiceConfiguration.Cloud.cscfg",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Cloud.cscfg",
+              "RelativeDocumentMoniker": "NotificationService\\ServiceConfiguration.Cloud.cscfg",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationService\\ServiceConfiguration.Cloud.cscfg",
+              "RelativeToolTip": "NotificationService\\ServiceConfiguration.Cloud.cscfg",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-08-18T10:47:54.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "WorkerRole.cs",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationS\\WorkerRole.cs",
+              "RelativeDocumentMoniker": "NotificationS\\WorkerRole.cs",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\NotificationS\\WorkerRole.cs",
+              "RelativeToolTip": "NotificationS\\WorkerRole.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAQwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-18T10:44:16.992Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\AdminToolsConsoleApp\\Program.cs",
+              "RelativeDocumentMoniker": "AdminToolsConsoleApp\\Program.cs",
+              "ToolTip": "C:\\Users\\Win10\\source\\repos\\StackOverflow\\AdminToolsConsoleApp\\Program.cs",
+              "RelativeToolTip": "AdminToolsConsoleApp\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-18T10:14:34.017Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
