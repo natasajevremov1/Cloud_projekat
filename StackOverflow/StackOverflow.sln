@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminToolsConsoleApp", "AdminToolsConsoleApp\AdminToolsConsoleApp.csproj", "{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}"
-EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "NotificationService", "NotificationService\NotificationService.ccproj", "{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationS", "NotificationS\NotificationS.csproj", "{2BD0C258-B064-43D2-BBFD-BCE0674303F0}"
@@ -13,16 +11,16 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "HealthMonitoringService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMonitoringS", "HealthMonitoringS\HealthMonitoringS.csproj", "{72277FB1-5892-4FC8-832E-921C9D32C5C7}"
 EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "StackOverflowService", "StackOverflowService\StackOverflowService.ccproj", "{C3F83A11-020F-44C4-989A-20B0803A3B9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackOverflowService_WebRole", "StackOverflowService_WebRole\StackOverflowService_WebRole.csproj", "{B3868082-08AD-45DC-908D-4FCC593D166A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A00332D2-BCF7-4C3D-8685-CC13E7B5420A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB16136-0BE2-4A4F-8133-7D900D6A8AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +37,14 @@ Global
 		{72277FB1-5892-4FC8-832E-921C9D32C5C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72277FB1-5892-4FC8-832E-921C9D32C5C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72277FB1-5892-4FC8-832E-921C9D32C5C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3F83A11-020F-44C4-989A-20B0803A3B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3F83A11-020F-44C4-989A-20B0803A3B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3F83A11-020F-44C4-989A-20B0803A3B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3F83A11-020F-44C4-989A-20B0803A3B9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3868082-08AD-45DC-908D-4FCC593D166A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3868082-08AD-45DC-908D-4FCC593D166A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3868082-08AD-45DC-908D-4FCC593D166A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3868082-08AD-45DC-908D-4FCC593D166A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
