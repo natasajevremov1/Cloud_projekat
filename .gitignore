@@ -1,0 +1,48 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.db
+*.sdf
+*.log
+*.VC.db
+*.VC.VC.opendb
+
+# Build folders
+bin/
+obj/
+Debug/
+Release/
+
+# Azure
+csx/
+*.publishsettings
+*.azurePubxml
+*.azurePubxml.user
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+*.nuget.targets
+
+# Rider IDE
+.idea/
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Others
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Node.js (ako koristiš npm u projektu)
+node_modules/
+
+# Ignore secrets
+secrets.json
