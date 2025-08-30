@@ -1,0 +1,94 @@
+﻿@model StackOverflowService_WebRole.Models.User
+@{
+    ViewBag.Title = "Prijava";
+}
+
+<style>
+    /* Boja za sve dugmad i linkove */
+    .btn-custom, .form-link {
+        background-color: #007BFF;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 15px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .btn-custom:hover, .form-link:hover {
+            background-color: #0056b3;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* Stil kartica */
+    .auth-card {
+        width: 400px;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+        .auth-card h3 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+    /* Centriranje forme */
+    .auth-wrapper {
+        min-height: 85vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f1f3f5;
+    }
+
+    .form-group label {
+        font-weight: 500;
+    }
+</style>
+
+<!-- PRIKAZ PORUKA -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["Success"]
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger text-center">
+        @Html.ValidationSummary()
+    </div>
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h3 class="text-center">🔑 Prijava</h3>
+
+        @using (Html.BeginForm("Login", "User", FormMethod.Post))
+        {
+            <div class="form-group mb-3">
+                @Html.Label("Email")
+                @Html.TextBox("email", null, new { @class = "form-control", placeholder = "Unesite email" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.Label("Lozinka")
+                @Html.Password("password", null, new { @class = "form-control", placeholder = "Unesite lozinku" })
+            </div>
+
+            <button type="submit" class="btn-custom w-100">Prijavi se</button>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Register", "User")" class="form-link" style="display:inline-block; width:auto; padding:0; background:none; color:#007BFF; font-weight:500; text-decoration:underline;">
+                    Nemate nalog? Registrujte se
+                </a>
+            </div>
+        }
+    </div>
+</div>

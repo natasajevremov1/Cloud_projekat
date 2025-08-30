@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace StackOverflowService_WebRole.Models
 {
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
-    using System;
-    using System.Linq;
-
     public class UsersRepository
     {
         private CloudTable _table;
@@ -38,6 +33,9 @@ namespace StackOverflowService_WebRole.Models
 
         public User GetUserByEmail(string email)
         {
+            if (string.IsNullOrEmpty(email))
+                return null;
+
             var retrieveOperation = TableOperation.Retrieve<User>("User", email);
             var result = _table.Execute(retrieveOperation);
             return result.Result as User;
@@ -59,5 +57,4 @@ namespace StackOverflowService_WebRole.Models
             }
         }
     }
-
 }

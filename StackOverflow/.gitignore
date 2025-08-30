@@ -1,0 +1,18 @@
+# Visual Studio fajlovi
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+*.dll
+*.pdb
+bin/
+obj/
+
+# Windows folderi koje je pokupio
+Desktop/
+Documents/
+Downloads/
+Music/
+Pictures/
+Videos/

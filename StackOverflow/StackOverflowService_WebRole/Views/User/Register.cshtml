@@ -1,0 +1,124 @@
+﻿@model StackOverflowService_WebRole.Models.User
+@{
+    ViewBag.Title = "Registracija";
+}
+
+<style>
+    /* Boja za sve dugmad i linkove */
+    .btn-custom, .form-link {
+        background-color: #007BFF;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 15px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .btn-custom:hover, .form-link:hover {
+            background-color: #0056b3;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* Stil kartica */
+    .auth-card {
+        width: 500px;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+        .auth-card h3 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+    /* Centriranje forme */
+    .auth-wrapper {
+        min-height: 90vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f1f3f5;
+    }
+
+    .form-group label {
+        font-weight: 500;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h3 class="text-center mb-4">📝 Registracija</h3>
+
+        @using (Html.BeginForm("Register", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <!-- Prikaz grešaka -->
+            if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success text-center">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger text-center" })
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.FirstName)
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Ime" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.LastName)
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Prezime" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.PasswordHash)
+                @Html.PasswordFor(m => m.PasswordHash, new { @class = "form-control", placeholder = "Lozinka" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Gender)
+                @Html.DropDownListFor(m => m.Gender, new SelectList(new[] { "Male", "Female", "Other" }), "Odaberite pol", new { @class = "form-control" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Country)
+                @Html.TextBoxFor(m => m.Country, new { @class = "form-control", placeholder = "Država" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.City)
+                @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Grad" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Address)
+                @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Adresa" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.Label("Profilna slika")
+                <input type="file" name="ProfileImage" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn-custom w-100">Registruj se</button>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Login", "User")" class="form-link" style="display:inline-block; width:auto; padding:0; background:none; color:#007BFF; font-weight:500; text-decoration:underline;">
+                    Već imate nalog? Prijavite se
+                </a>
+            </div>
+        }
+    </div>
+</div>

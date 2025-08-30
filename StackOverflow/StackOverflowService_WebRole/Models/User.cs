@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace StackOverflowService_WebRole.Models
@@ -10,10 +6,11 @@ namespace StackOverflowService_WebRole.Models
     public class User : TableEntity
     {
         public User() { }
-        public User(string email, string id)
+
+        public User(string email)
         {
-            PartitionKey = email;
-            RowKey = id; // jedinstveni ID korisnika
+            PartitionKey = "User"; // fiksni PartitionKey
+            RowKey = email;         // jedinstveni RowKey
         }
 
         public string FirstName { get; set; }
@@ -25,6 +22,10 @@ namespace StackOverflowService_WebRole.Models
         public string PasswordHash { get; set; }
         public string ProfileImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Email
+        {
+            get { return RowKey; }
+            set { RowKey = value; }
+        }
     }
-
 }

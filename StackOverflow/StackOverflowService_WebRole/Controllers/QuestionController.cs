@@ -15,27 +15,30 @@ namespace StackOverflowService_WebRole.Controllers
         // GET: /Question
         public ActionResult Index(string search = "", string sort = "")
         {
-            var questions = repo.GetAllQuestions();
+            // Dohvati pitanja i odmah ih pretvori u List<Question>
+            var questions = repo.GetAllQuestions().ToList();
 
             // Pretraga po naslovu
             if (!string.IsNullOrEmpty(search))
-                questions = questions.Where(q => q.Title.Contains(search));
+            {
+                questions = questions
+           .Where(q => !string.IsNullOrEmpty(q.Title) && q.Title.ToLower().Contains(search.ToLower()))
+           .ToList();
+            }
 
             // Sortiranje
             switch (sort)
             {
                 case "votes":
-                    questions = questions.OrderByDescending(q => q.TotalVotes);
+                    questions = questions.OrderByDescending(q => q.TotalVotes).ToList();
                     break;
                 case "date":
-                    questions = questions.OrderByDescending(q => q.CreatedAt);
-                    break;
                 default:
-                    questions = questions.OrderByDescending(q => q.CreatedAt);
+                    questions = questions.OrderByDescending(q => q.CreatedAt).ToList();
                     break;
             }
 
-            return View(questions.ToList());
+            return View(questions);
         }
 
         // GET: /Question/Add
