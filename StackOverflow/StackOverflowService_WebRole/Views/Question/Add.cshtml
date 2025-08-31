@@ -1,0 +1,30 @@
+﻿@model StackOverflowService_WebRole.Models.Question
+
+@{
+    ViewBag.Title = "Postavi pitanje";
+}
+
+<div class="container mt-4">
+    <h2>Postavi novo pitanje</h2>
+
+    @using (Html.BeginForm("Add", "Question", FormMethod.Post))
+    {
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.Title, "Naslov")
+            @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.Description, "Detaljan opis")
+            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.ImageUrl, "URL slike (opciono)")
+            @Html.TextBoxFor(m => m.ImageUrl, new { @class = "form-control" })
+        </div>
+
+        <button type="submit" class="btn btn-success">Sačuvaj pitanje</button>
+        <a href="@Url.Action("Index", "Question")" class="btn btn-secondary">Nazad</a>
+    }
+</div>

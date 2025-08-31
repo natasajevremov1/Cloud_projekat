@@ -9,9 +9,25 @@
         <a href="@Url.Action("Add")" class="btn btn-primary">Postavi pitanje</a>
     </div>
 
-    <form method="get" class="mb-3">
-        <input type="text" name="search" class="form-control" placeholder="Pretraži po naslovu..." value="@Request.QueryString["search"]" />
+    <!-- Pretraga i sortiranje -->
+    <form method="get" id="searchSortForm" class="mb-3 d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Pretraži po naslovu..." value="@ViewBag.CurrentSearch" />
+        <select name="sort" class="form-select me-2" id="sortSelect">
+            <option value="all" @(ViewBag.CurrentSort == "all" ? "selected" : "")>Sva pitanja</option>
+            <option value="date" @(ViewBag.CurrentSort == "date" ? "selected" : "")>Najnovija</option>
+            <option value="votes" @(ViewBag.CurrentSort == "votes" ? "selected" : "")>Najviše glasova</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">Primeni</button>
     </form>
+
+    <script>
+        document.getElementById("sortSelect").addEventListener("change", function () {
+            if (this.value === "all") {
+                document.querySelector("input[name='search']").value = ""; // resetuje pretragu
+            }
+            document.getElementById("searchSortForm").submit();
+        });
+    </script>
 
     @foreach (var q in Model)
     {
@@ -19,15 +35,31 @@
             <div class="card-body">
                 <h5 class="card-title">@q.Title</h5>
                 <h6 class="card-subtitle mb-2 text-muted">
-                    @q.AuthorEmail | @q.CreatedAt.ToString("dd/MM/yyyy HH:mm") | Odgovora: @q.AnswersCount
+                    @q.AuthorEmail | @q.CreatedAt.ToString("dd/MM/yyyy HH:mm") |
+                    Odgovora: @q.AnswersCount | Glasova: @q.TotalVotes
                 </h6>
-                <p class="card-text">@q.Description?.Substring(0, Math.Min(q.Description.Length, 150)) ...</p>
-                <a href="@Url.Action("Details", new { id = q.RowKey })" class="card-link">Pogledaj detalje</a>
-                @if (Session["CurrentUser"] != null && ((StackOverflowService_WebRole.Models.User)Session["CurrentUser"]).PartitionKey == q.AuthorEmail)
+
+                <p class="card-text">
+                    @{
+                        var desc = q.Description ?? "";
+                        var shortDesc = desc.Length > 150 ? desc.Substring(0, 150) + "..." : desc;
+                    }
+                    @shortDesc
+                </p>
+
+                @if (!string.IsNullOrEmpty(q.ImageUrl))
                 {
-                    <a href="@Url.Action("Edit", new { id = q.RowKey })" class="card-link">Izmeni</a>
-                    <a href="@Url.Action("Delete", new { id = q.RowKey })" class="card-link text-danger">Obriši</a>
+                    <img src="@q.ImageUrl" alt="Slika problema" class="img-fluid mt-2" style="max-height:200px;" />
                 }
+
+                <div class="mt-2">
+                    <a href="@Url.Action("Details", new { id = q.RowKey })" class="card-link">Pogledaj detalje</a>
+                    @if (Session["CurrentUser"] != null && ((StackOverflowService_WebRole.Models.User)Session["CurrentUser"]).PartitionKey == q.AuthorEmail)
+                    {
+                        <a href="@Url.Action("Edit", new { id = q.RowKey })" class="card-link">Izmeni</a>
+                        <a href="@Url.Action("Delete", new { id = q.RowKey })" class="card-link text-danger">Obriši</a>
+                    }
+                </div>
             </div>
         </div>
     }

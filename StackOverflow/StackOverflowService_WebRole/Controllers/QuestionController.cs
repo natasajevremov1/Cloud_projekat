@@ -15,15 +15,15 @@ namespace StackOverflowService_WebRole.Controllers
         // GET: /Question
         public ActionResult Index(string search = "", string sort = "")
         {
-            // Dohvati pitanja i odmah ih pretvori u List<Question>
+            // Dohvati sva pitanja
             var questions = repo.GetAllQuestions().ToList();
 
             // Pretraga po naslovu
             if (!string.IsNullOrEmpty(search))
             {
                 questions = questions
-           .Where(q => !string.IsNullOrEmpty(q.Title) && q.Title.ToLower().Contains(search.ToLower()))
-           .ToList();
+                    .Where(q => !string.IsNullOrEmpty(q.Title) && q.Title.ToLower().Contains(search.ToLower()))
+                    .ToList();
             }
 
             // Sortiranje
@@ -33,14 +33,22 @@ namespace StackOverflowService_WebRole.Controllers
                     questions = questions.OrderByDescending(q => q.TotalVotes).ToList();
                     break;
                 case "date":
+                    questions = questions.OrderByDescending(q => q.CreatedAt).ToList();
+                    break;
+                case "all":
+                    // ništa ne radimo, prikazujemo sva pitanja u trenutnom redosledu
+                    break;
                 default:
                     questions = questions.OrderByDescending(q => q.CreatedAt).ToList();
                     break;
             }
 
+            // ViewBag za zadržavanje search i sort vrednosti
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentSort = sort;
+
             return View(questions);
         }
-
         // GET: /Question/Add
         public ActionResult Add()
         {
@@ -54,10 +62,18 @@ namespace StackOverflowService_WebRole.Controllers
             if (ModelState.IsValid)
             {
                 var user = Session["CurrentUser"] as User;
+
+                // OBAVEZNO postavi PK i RK
+                question.PartitionKey = "Question";
+                question.RowKey = Guid.NewGuid().ToString();
+
                 question.AuthorEmail = user.PartitionKey;
-                question.CreatedAt = System.DateTime.UtcNow;
-                question.TotalVotes= 0;
+                question.CreatedAt = DateTime.UtcNow;
+                question.TotalVotes = 0;
+                question.AnswersCount = 0;
+
                 repo.AddQuestion(question);
+
                 return RedirectToAction("Index");
             }
             return View(question);
