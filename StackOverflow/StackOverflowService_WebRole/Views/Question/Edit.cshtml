@@ -1,0 +1,50 @@
+﻿@model StackOverflowService_WebRole.Models.Question
+
+@{
+    ViewBag.Title = "Izmeni pitanje";
+}
+
+<h2>Izmeni pitanje</h2>
+
+@using (Html.BeginForm("Edit", "Question", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.PartitionKey)
+    @Html.HiddenFor(m => m.RowKey)
+    @Html.HiddenFor(m => m.AuthorEmail)
+    @Html.HiddenFor(m => m.AuthorName)
+    @Html.HiddenFor(m => m.CreatedAt)
+    @Html.HiddenFor(m => m.TotalVotes)
+    @Html.HiddenFor(m => m.AnswersCount)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Title)
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Title)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description, "Detaljan opis problema")
+        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
+        @Html.ValidationMessageFor(m => m.Description)
+    </div>
+
+    <div class="form-group">
+        <label>Trenutna slika:</label><br />
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="Slika pitanja" class="img-thumbnail" style="max-width:200px;" />
+        }
+        else
+        {
+            <p><i>Nema slike</i></p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Nova slika (opciono)</label>
+        <input type="file" name="ImageFile" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Sačuvaj izmene</button>
+    <a href="@Url.Action("Index", "Question")" class="btn btn-secondary mt-3">Nazad</a>
+}

@@ -52,7 +52,7 @@
                     <div class="mt-3">
                         @if (currentUser != null)
                         {
-                            if (currentUser.PartitionKey == Model.AuthorEmail)
+                            if (currentUser.Email == Model.AuthorEmail)
                             {
                                 <!-- Autor: stvarni linkovi -->
                                 <a href="@Url.Action("Edit", "Question", new { id = Model.RowKey })"
@@ -105,7 +105,7 @@
                                     <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "up" })" class="btn btn-sm btn-success me-2">👍</a>
                                     <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "down" })" class="btn btn-sm btn-danger">👎</a>
 
-                                    @if (currentUser != null && currentUser.PartitionKey == Model.AuthorEmail)
+                                    @if (currentUser != null && currentUser.Email == Model.AuthorEmail)
                                     {
                                         <a href="@Url.Action("MarkBest", "Answer", new { id = ans.RowKey })" class="btn btn-sm btn-primary ms-2">
                                             ✅ Označi kao najbolji
