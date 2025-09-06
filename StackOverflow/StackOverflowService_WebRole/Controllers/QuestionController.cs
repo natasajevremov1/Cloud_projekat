@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace StackOverflowService_WebRole.Controllers
 {
@@ -35,9 +37,6 @@ namespace StackOverflowService_WebRole.Controllers
                 case "date":
                     questions = questions.OrderByDescending(q => q.CreatedAt).ToList();
                     break;
-                case "all":
-                    // ništa ne radimo, prikazujemo sva pitanja u trenutnom redosledu
-                    break;
                 default:
                     questions = questions.OrderByDescending(q => q.CreatedAt).ToList();
                     break;
@@ -57,7 +56,7 @@ namespace StackOverflowService_WebRole.Controllers
 
         // POST: /Question/Add
         [HttpPost]
-        public ActionResult Add(Question question)
+        public ActionResult Add(Question question, HttpPostedFileBase ImageFile)
         {
             if (ModelState.IsValid)
             {
@@ -68,9 +67,30 @@ namespace StackOverflowService_WebRole.Controllers
                 question.RowKey = Guid.NewGuid().ToString();
 
                 question.AuthorEmail = user.PartitionKey;
+                question.AuthorName = user.FirstName + " " + user.LastName; // <-- ovo je novo
                 question.CreatedAt = DateTime.UtcNow;
                 question.TotalVotes = 0;
                 question.AnswersCount = 0;
+
+                // Ako je uploadovana slika
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    var storageAccount = CloudStorageAccount.Parse(
+                        System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+                    var blobClient = storageAccount.CreateCloudBlobClient();
+                    var container = blobClient.GetContainerReference("questionimages");
+                    container.CreateIfNotExists();
+                    container.SetPermissions(new Microsoft.WindowsAzure.Storage.Blob.BlobContainerPermissions
+                    {
+                        PublicAccess = Microsoft.WindowsAzure.Storage.Blob.BlobContainerPublicAccessType.Blob
+                    });
+
+                    string fileName = question.RowKey + System.IO.Path.GetExtension(ImageFile.FileName);
+                    var blockBlob = container.GetBlockBlobReference(fileName);
+                    blockBlob.UploadFromStream(ImageFile.InputStream);
+
+                    question.ImageUrl = blockBlob.Uri.ToString();
+                }
 
                 repo.AddQuestion(question);
 
@@ -78,7 +98,6 @@ namespace StackOverflowService_WebRole.Controllers
             }
             return View(question);
         }
-
         // GET: /Question/Edit/{id}
         public ActionResult Edit(string id)
         {
@@ -102,17 +121,28 @@ namespace StackOverflowService_WebRole.Controllers
         }
 
         // GET: /Question/Delete/{id}
+        // GET: /Question/Delete/{id}
+        // GET: /Question/Delete/{id}
         public ActionResult Delete(string id)
         {
             var question = repo.GetQuestionById(id);
             var user = Session["CurrentUser"] as User;
-            if (question == null || question.AuthorEmail != user.PartitionKey)
+
+            if (question == null)
                 return HttpNotFound();
 
+            // Neulogovani korisnik ili neautor
+            if (user == null || question.AuthorEmail != user.PartitionKey)
+            {
+                TempData["ErrorMessage"] = "Samo autor može brisati i vršiti izmenu svog pitanja.";
+                return RedirectToAction("Details", new { id = id });
+            }
+
+            // Ako je autor → dozvoli brisanje
             repo.DeleteQuestion(question);
+            TempData["SuccessMessage"] = "Pitanje uspešno obrisano.";
             return RedirectToAction("Index");
         }
-
         // GET: /Question/Details/{id}
         public ActionResult Details(string id)
         {
@@ -120,7 +150,18 @@ namespace StackOverflowService_WebRole.Controllers
             if (question == null)
                 return HttpNotFound();
 
+            // Dohvati sve odgovore za ovo pitanje
+            var answersRepo = new AnswersRepository(
+                System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+            var answers = answersRepo.GetAnswersByQuestionId(id).ToList()
+                             .OrderByDescending(a => a.Votes)
+                             .ToList();
+
+            // Prosledi odgovore u ViewBag
+            ViewBag.Answers = answers;
+
             return View(question);
         }
+
     }
 }

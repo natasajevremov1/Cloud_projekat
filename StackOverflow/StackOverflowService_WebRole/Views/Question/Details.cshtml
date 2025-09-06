@@ -1,0 +1,153 @@
+﻿@model StackOverflowService_WebRole.Models.Question
+@{
+    ViewBag.Title = "Detalji pitanja";
+
+    var currentUser = Session["CurrentUser"] as StackOverflowService_WebRole.Models.User;
+    var answers = ViewBag.Answers as List<StackOverflowService_WebRole.Models.Answer>;
+}
+
+<!-- Modal za neautora / neulogovanog -->
+<div class="modal fade" id="noAuthModal" tabindex="-1" aria-labelledby="noAuthLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noAuthLabel">Obaveštenje</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+            </div>
+            <div class="modal-body">
+                Samo autor može brisati i vršiti izmenu svog pitanja.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">U redu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">@Model.Title</h3>
+                    <h6 class="text-muted">
+                        Autor: @Model.AuthorName |
+                        Postavljeno: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm") |
+                        Glasova: @Model.TotalVotes |
+                        Odgovora: @Model.AnswersCount
+                    </h6>
+
+                    <p class="mt-3">@Model.Description</p>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="text-center mb-3">
+                            <img src="@Model.ImageUrl" alt="Slika problema"
+                                 class="img-fluid rounded shadow"
+                                 style="max-height: 300px;" />
+                        </div>
+                    }
+
+                    <!-- Dugmad za autora ili neautora -->
+                    <div class="mt-3">
+                        @if (currentUser != null)
+                        {
+                            if (currentUser.PartitionKey == Model.AuthorEmail)
+                            {
+                                <!-- Autor: stvarni linkovi -->
+                                <a href="@Url.Action("Edit", "Question", new { id = Model.RowKey })"
+                                   class="btn btn-sm btn-warning">Izmeni</a>
+
+                                <a href="@Url.Action("Delete", "Question", new { id = Model.RowKey })"
+                                   class="btn btn-sm btn-danger">Obriši</a>
+                            }
+                            else
+                            {
+                                <!-- Neautor: modal -->
+                                <a href="javascript:void(0)" class="btn btn-sm btn-warning"
+                                   data-bs-toggle="modal" data-bs-target="#noAuthModal">Izmeni</a>
+
+                                <a href="javascript:void(0)" class="btn btn-sm btn-danger"
+                                   data-bs-toggle="modal" data-bs-target="#noAuthModal">Obriši</a>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Neulogovani: modal -->
+                            <a href="javascript:void(0)" class="btn btn-sm btn-warning"
+                               data-bs-toggle="modal" data-bs-target="#noAuthModal">Izmeni</a>
+
+                            <a href="javascript:void(0)" class="btn btn-sm btn-danger"
+                               data-bs-toggle="modal" data-bs-target="#noAuthModal">Obriši</a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Odgovori -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">💬 Odgovori (@Model.AnswersCount)</h4>
+
+                    @if (answers != null && answers.Any())
+                    {
+                        foreach (var ans in answers)
+                        {
+                            <div class="border rounded p-3 mb-3 bg-light">
+                                <p>@ans.Content</p>
+                                <small class="text-muted">
+                                    Autor: @ans.AuthorEmail |
+                                    @ans.CreatedAt.ToString("dd/MM/yyyy HH:mm") |
+                                    Glasova: @ans.Votes
+                                </small>
+
+                                <div class="mt-2">
+                                    <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "up" })" class="btn btn-sm btn-success me-2">👍</a>
+                                    <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "down" })" class="btn btn-sm btn-danger">👎</a>
+
+                                    @if (currentUser != null && currentUser.PartitionKey == Model.AuthorEmail)
+                                    {
+                                        <a href="@Url.Action("MarkBest", "Answer", new { id = ans.RowKey })" class="btn btn-sm btn-primary ms-2">
+                                            ✅ Označi kao najbolji
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Nema odgovora za ovo pitanje.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Forma za dodavanje odgovora -->
+            @if (currentUser != null)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3">✍️ Dodaj odgovor</h5>
+
+                        @using (Html.BeginForm("AddAnswer", "Answer", FormMethod.Post))
+                        {
+                            @Html.Hidden("QuestionId", Model.RowKey)
+
+                            <div class="form-group mb-3">
+                                <textarea name="Text" class="form-control" rows="4" placeholder="Unesite svoj odgovor..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Pošalji odgovor</button>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    Morate biti <a href="@Url.Action("Login", "User")">prijavljeni</a> da biste dodali odgovor.
+                </div>
+            }
+        </div>
+    </div>
+</div>

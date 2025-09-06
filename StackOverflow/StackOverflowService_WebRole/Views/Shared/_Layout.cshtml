@@ -3,32 +3,89 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - 💡 </title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <!-- Samo naziv aplikacije -->
+            <span class="navbar-brand">💡 </span>
+
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+            <div class="collapse navbar-collapse">
+                <!-- Leva strana: dugmad -->
+                <ul class="navbar-nav me-auto">
+                    @{
+                        var currentUser = Session["CurrentUser"] as StackOverflowService_WebRole.Models.User;
+                        if (currentUser != null)
+                        {
+                            <li class="nav-item me-2">
+                                <a href="@Url.Action("Add", "Question")" class="btn btn-sm btn-outline-light">Dodaj pitanje</a>
+                            </li>
+                            <li class="nav-item me-2">
+                                <a href="@Url.Action("Index", "Question")" class="btn btn-sm btn-outline-light">Pogledaj pitanja</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Logout", "User")" class="btn btn-sm btn-outline-light">Odjava</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-2">
+                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginAlertModal" class="btn btn-sm btn-outline-light">Dodaj pitanje</a>
+                            </li>
+                            <li class="nav-item me-2">
+                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginAlertModal" class="btn btn-sm btn-outline-light">Pogledaj pitanja</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginAlertModal" class="btn btn-sm btn-outline-light">Odjava</a>
+                            </li>
+                        }
+                    }
                 </ul>
+
+                <!-- Desna strana: prikaz korisnika -->
+                @if (currentUser != null)
+                {
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="navbar-text text-light">Korisnik: @currentUser.FirstName</span>
+                        </li>
+                    </ul>
+                }
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <!-- Modal za neulogovanog korisnika -->
+    <div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginAlertLabel">Obaveštenje</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+                <div class="modal-body">
+                    Morate se prvo ulogovati.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">U redu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content mt-4">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - 💡 </p>
         </footer>
     </div>
 

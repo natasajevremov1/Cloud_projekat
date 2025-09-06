@@ -12,6 +12,7 @@ namespace StackOverflowService_WebRole.Models
             PartitionKey = "Question";
             RowKey = id; // jedinstveni ID
         }
+        public string AuthorName { get; set; }
 
         public string Title { get; set; }
         public string Description { get; set; }

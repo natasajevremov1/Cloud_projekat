@@ -107,9 +107,15 @@
                 @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Adresa" })
             </div>
 
+            <!-- Profilna slika sa preview -->
             <div class="form-group mb-3">
                 @Html.Label("Profilna slika")
-                <input type="file" name="ProfileImage" class="form-control" />
+                <input type="file" name="ProfileImage" class="form-control" id="profileImageInput" accept="image/*" />
+
+                <div class="mt-3 text-center">
+                    <img id="profileImagePreview" src="#" alt="Pregled slike"
+                         style="max-width: 150px; display: none; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" />
+                </div>
             </div>
 
             <button type="submit" class="btn-custom w-100">Registruj se</button>
@@ -122,3 +128,16 @@
         }
     </div>
 </div>
+
+<script>document.getElementById("profileImageInput").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById("profileImagePreview");
+                preview.src = e.target.result;
+                preview.style.display = "block"; // prikaži sliku
+            };
+            reader.readAsDataURL(file);
+        }
+    });</script>

@@ -202,6 +202,7 @@
     <Content Include="Views\User\Register.cshtml" />
     <Content Include="Views\Question\Index.cshtml" />
     <Content Include="Views\Question\Add.cshtml" />
+    <Content Include="Views\Question\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
