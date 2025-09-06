@@ -1,0 +1,51 @@
+﻿@model StackOverflowService_WebRole.Models.User
+@{
+    ViewBag.Title = "Izmena profila";
+}
+
+<div class="container mt-4">
+    <h3>Izmena profila</h3>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @using (Html.BeginForm("EditProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="mb-3">
+            <label>Ime</label>
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", required = "required" })
+        </div>
+        <div class="mb-3">
+            <label>Prezime</label>
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", required = "required" })
+        </div>
+        <div class="mb-3">
+            <label>Pol</label>
+            @Html.TextBoxFor(m => m.Gender, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Država</label>
+            @Html.TextBoxFor(m => m.Country, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Grad</label>
+            @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Adresa</label>
+            @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Profilna slika</label>
+            <input type="file" name="ProfileImage" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+            {
+                <img src="@Model.ProfileImageUrl" alt="Profilna slika" class="img-thumbnail mt-2" style="max-height:150px;" />
+            }
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sačuvaj promene</button>
+    }
+</div>

@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
+using Microsoft.WindowsAzure.Storage;
 using StackOverflowService_WebRole.Models;
 
 namespace StackOverflowService_WebRole.Controllers
@@ -75,6 +77,83 @@ namespace StackOverflowService_WebRole.Controllers
 
             return View(user);
         }
+
+        // GET: /User/EditProfile
+        public ActionResult EditProfile()
+        {
+            var user = Session["CurrentUser"] as User;
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Morate biti prijavljeni da biste menjali profil.";
+                return RedirectToAction("Login");
+            }
+
+            // Dohvati svež objekat iz baze (sigurnije)
+            var currentUser = repo.GetUserByEmail(user.Email);
+            if (currentUser == null)
+                return HttpNotFound();
+
+            return View(currentUser);
+        }
+
+        // POST: /User/EditProfile
+        [HttpPost]
+        public ActionResult EditProfile(User updatedUser, HttpPostedFileBase ProfileImage)
+        {
+            var user = Session["CurrentUser"] as User;
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Morate biti prijavljeni da biste menjali profil.";
+                return RedirectToAction("Login");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var existingUser = repo.GetUserByEmail(user.Email);
+                if (existingUser == null)
+                    return HttpNotFound();
+
+                // Ažuriranje polja koja korisnik može menjati
+                existingUser.FirstName = updatedUser.FirstName;
+                existingUser.LastName = updatedUser.LastName;
+                existingUser.Gender = updatedUser.Gender;
+                existingUser.Country = updatedUser.Country;
+                existingUser.City = updatedUser.City;
+                existingUser.Address = updatedUser.Address;
+
+                // Upload nove profilne slike ako postoji
+                if (ProfileImage != null && ProfileImage.ContentLength > 0)
+                {
+                    var storageAccount = CloudStorageAccount.Parse(
+                        System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+                    var blobClient = storageAccount.CreateCloudBlobClient();
+                    var container = blobClient.GetContainerReference("profileimages");
+                    container.CreateIfNotExists();
+                    container.SetPermissions(new Microsoft.WindowsAzure.Storage.Blob.BlobContainerPermissions
+                    {
+                        PublicAccess = Microsoft.WindowsAzure.Storage.Blob.BlobContainerPublicAccessType.Blob
+                    });
+
+                    string fileName = existingUser.Email + System.IO.Path.GetExtension(ProfileImage.FileName);
+                    var blockBlob = container.GetBlockBlobReference(fileName);
+                    blockBlob.UploadFromStream(ProfileImage.InputStream);
+
+                    existingUser.ProfileImageUrl = blockBlob.Uri.ToString();
+                }
+
+                // Sačuvaj promene u bazi
+                repo.UpdateUser(existingUser);
+
+                // Update session
+                Session["CurrentUser"] = existingUser;
+
+                TempData["SuccessMessage"] = "Profil uspešno izmenjen!";
+                return RedirectToAction("EditProfile");
+            }
+
+            return View(updatedUser);
+        }
+
 
         // GET: /User/Login
         public ActionResult Login()
@@ -160,6 +239,8 @@ namespace StackOverflowService_WebRole.Controllers
                 }
                 return builder.ToString();
             }
+
+
         }
     }
 }
