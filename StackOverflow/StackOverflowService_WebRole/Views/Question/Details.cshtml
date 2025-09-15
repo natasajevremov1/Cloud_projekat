@@ -4,6 +4,20 @@
 
     var currentUser = Session["CurrentUser"] as StackOverflowService_WebRole.Models.User;
     var answers = ViewBag.Answers as List<StackOverflowService_WebRole.Models.Answer>;
+
+    var votesRepo = new StackOverflowService_WebRole.Models.VotesRepository(
+        System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+
+    Dictionary<string, bool> userHasVoted = new Dictionary<string, bool>();
+    if (currentUser != null && answers != null)
+    {
+        foreach (var ans in answers)
+        {
+            userHasVoted[ans.RowKey] = votesRepo.HasUserVoted(ans.RowKey, currentUser.Email);
+            ans.Votes = votesRepo.GetVoteCount(ans.RowKey); // osveži broj glasova
+        }
+    }
+    ViewBag.UserHasVoted = userHasVoted;
 }
 
 <!-- Modal za neautora / neulogovanog -->
@@ -54,7 +68,6 @@
                         {
                             if (currentUser.Email == Model.AuthorEmail)
                             {
-                                <!-- Autor: stvarni linkovi -->
                                 <a href="@Url.Action("Edit", "Question", new { id = Model.RowKey })"
                                    class="btn btn-sm btn-warning">Izmeni</a>
 
@@ -63,7 +76,6 @@
                             }
                             else
                             {
-                                <!-- Neautor: modal -->
                                 <a href="javascript:void(0)" class="btn btn-sm btn-warning"
                                    data-bs-toggle="modal" data-bs-target="#noAuthModal">Izmeni</a>
 
@@ -73,7 +85,6 @@
                         }
                         else
                         {
-                            <!-- Neulogovani: modal -->
                             <a href="javascript:void(0)" class="btn btn-sm btn-warning"
                                data-bs-toggle="modal" data-bs-target="#noAuthModal">Izmeni</a>
 
@@ -93,23 +104,37 @@
                     {
                         foreach (var ans in answers)
                         {
+                            var disabled = (userHasVoted != null && userHasVoted.ContainsKey(ans.RowKey) && userHasVoted[ans.RowKey]) ? "disabled" : "";
                             <div class="border rounded p-3 mb-3 bg-light">
-                                <p>@ans.Content</p>
-                                <small class="text-muted">
-                                    Autor: @ans.AuthorEmail |
-                                    @ans.CreatedAt.ToString("dd/MM/yyyy HH:mm") |
-                                    Glasova: @ans.Votes
+                                <small class="text-muted d-block mb-1">
+                                    Autor: @ans.AuthorName | Postavljeno: @ans.CreatedAt.ToString("dd/MM/yyyy HH:mm") | Glasova: @ans.Votes
                                 </small>
+                                <p>@ans.Content</p>
 
                                 <div class="mt-2">
-                                    <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "up" })" class="btn btn-sm btn-success me-2">👍</a>
-                                    <a href="@Url.Action("VoteAnswer", "Answer", new { id = ans.RowKey, vote = "down" })" class="btn btn-sm btn-danger">👎</a>
+                                    @if (currentUser != null)
+                                    {
+                                        <form method="post" action="@Url.Action("Vote", "Answer")" style="display:inline">
+                                            @Html.Hidden("questionId", Model.RowKey)
+                                            @Html.Hidden("answerId", ans.RowKey)
+                                            <button type="submit" class="btn btn-sm btn-success" @disabled>
+                                                👍 (@ans.Votes)
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-secondary" disabled>👍 (@ans.Votes)</button>
+                                    }
 
+                                    @* Označi kao najbolji ostaje samo za autora pitanja *@
                                     @if (currentUser != null && currentUser.Email == Model.AuthorEmail)
                                     {
-                                        <a href="@Url.Action("MarkBest", "Answer", new { id = ans.RowKey })" class="btn btn-sm btn-primary ms-2">
-                                            ✅ Označi kao najbolji
-                                        </a>
+                                        <form method="post" action="@Url.Action("Accept", "Answer")" style="display:inline">
+                                            @Html.Hidden("questionId", Model.RowKey)
+                                            @Html.Hidden("answerId", ans.RowKey)
+                                            <button type="submit" class="btn btn-sm btn-primary ms-2">✅ Označi kao najbolji</button>
+                                        </form>
                                     }
                                 </div>
                             </div>
@@ -129,12 +154,12 @@
                     <div class="card-body">
                         <h5 class="mb-3">✍️ Dodaj odgovor</h5>
 
-                        @using (Html.BeginForm("AddAnswer", "Answer", FormMethod.Post))
+                        @using (Html.BeginForm("Add", "Answer", FormMethod.Post))
                         {
-                            @Html.Hidden("QuestionId", Model.RowKey)
+                            @Html.Hidden("questionId", Model.RowKey)
 
                             <div class="form-group mb-3">
-                                <textarea name="Text" class="form-control" rows="4" placeholder="Unesite svoj odgovor..." required></textarea>
+                                <textarea name="content" class="form-control" rows="4" placeholder="Unesite svoj odgovor..." required></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-success">Pošalji odgovor</button>

@@ -50,24 +50,53 @@ namespace StackOverflowService_WebRole.Models
         public void VoteAnswer(Answer answer, int voteChange)
         {
             answer.Votes += voteChange;
+            answer.ETag = "*"; // 🚀 fix
             var updateOperation = TableOperation.Replace(answer);
             _table.Execute(updateOperation);
         }
 
-        // Oznaci odgovor kao najbolji
+        // Poništi sve prethodne najbolje odgovore
+        public void ResetAcceptedAnswer(string questionId)
+        {
+            var answers = GetAnswersByQuestionId(questionId).ToList();
+            foreach (var ans in answers)
+            {
+                if (ans.IsAccepted)
+                {
+                    ans.IsAccepted = false;
+                    ans.ETag = "*"; // obavezno da ne baca 412
+                    var updateOperation = TableOperation.Replace(ans);
+                    _table.Execute(updateOperation);
+                }
+            }
+        }
+
+        // Označi kao najbolji
         public void MarkAsAccepted(Answer answer)
         {
+            ResetAcceptedAnswer(answer.PartitionKey);
+
             answer.IsAccepted = true;
+            answer.ETag = "*";
             var updateOperation = TableOperation.Replace(answer);
             _table.Execute(updateOperation);
         }
+
 
         // Brisanje odgovora (samo autor)
         public void DeleteAnswer(Answer answer)
         {
+            answer.ETag = "*"; // 🚀 fix
             var deleteOperation = TableOperation.Delete(answer);
             _table.Execute(deleteOperation);
         }
-    }
 
+        // Update odgovora
+        public void UpdateAnswer(Answer answer)
+        {
+            answer.ETag = "*"; // 🚀 fix
+            var updateOperation = TableOperation.Replace(answer);
+            _table.Execute(updateOperation);
+        }
+    }
 }

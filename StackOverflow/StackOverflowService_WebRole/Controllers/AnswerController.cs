@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using StackOverflowService_WebRole.Models;
 
@@ -11,55 +8,75 @@ namespace StackOverflowService_WebRole.Controllers
     {
         private AnswersRepository repo = new AnswersRepository(
             System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+        private VotesRepository votesRepo = new VotesRepository(
+            System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
 
         // POST: /Answer/Add
         [HttpPost]
         public ActionResult Add(string questionId, string content)
         {
             var user = Session["CurrentUser"] as User;
-            var answer = new Answer(questionId, System.Guid.NewGuid().ToString())
+            if (user == null)
+                return RedirectToAction("Login", "User");
+
+            var answer = new Answer(questionId, Guid.NewGuid().ToString())
             {
-                AuthorEmail = user.PartitionKey,
+                AuthorEmail = user.Email,
+                AuthorName = user.FirstName + " " + user.LastName,
                 Content = content,
-                CreatedAt = System.DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 Votes = 0,
                 IsAccepted = false
             };
             repo.AddAnswer(answer);
+
             return RedirectToAction("Details", "Question", new { id = questionId });
         }
 
-        // POST: /Answer/Vote
+        // POST: /Answer/Vote (sada samo 👍, jedan glas po korisniku)
         [HttpPost]
-        public ActionResult Vote(string questionId, string answerId, int voteChange)
+        public ActionResult Vote(string questionId, string answerId)
         {
-            var answer = repo.GetAnswerById(questionId, answerId);
-            repo.VoteAnswer(answer, voteChange);
+            var user = Session["CurrentUser"] as User;
+            if (user != null)
+            {
+                // Dodaj glas samo ako korisnik još nije glasao
+                if (!votesRepo.HasUserVoted(answerId, user.Email))
+                {
+                    votesRepo.AddVote(answerId, user.Email);
+                }
+            }
             return RedirectToAction("Details", "Question", new { id = questionId });
         }
 
-        // POST: /Answer/Accept
         [HttpPost]
         public ActionResult Accept(string questionId, string answerId)
         {
             var answer = repo.GetAnswerById(questionId, answerId);
             var user = Session["CurrentUser"] as User;
 
-            // Proveri da li je trenutni korisnik autor pitanja
             var questionRepo = new QuestionsRepository(
                 System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
             var question = questionRepo.GetQuestionById(questionId);
 
-            if (question.AuthorEmail != user.PartitionKey)
+            // Samo autor pitanja može označiti najbolji odgovor
+            if (question == null || user == null || question.AuthorEmail != user.Email)
                 return new HttpUnauthorizedResult();
 
-            // Oznaci odgovor kao najbolji
-            repo.MarkAsAccepted(answer);
+            // Resetuj prethodni najbolji odgovor
+            var allAnswers = repo.GetAnswersByQuestionId(questionId);
+            foreach (var ans in allAnswers)
+            {
+                ans.IsAccepted = false;
+                repo.MarkAsAccepted(ans);
+            }
 
-            // POZIV NotificationService (slanje mejlova)
-          //  NotificationService.SendBestAnswerNotification(questionId, answerId);
+            // Obeleži izabrani odgovor kao najbolji
+            answer.IsAccepted = true;
+            repo.MarkAsAccepted(answer);
 
             return RedirectToAction("Details", "Question", new { id = questionId });
         }
+
     }
 }

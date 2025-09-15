@@ -19,6 +19,7 @@ namespace StackOverflowService_WebRole.Models
 
         public string Content { get; set; }
         public string AuthorEmail { get; set; }
+        public string AuthorName { get; set; }
         public int Votes { get; set; }
         public bool IsAccepted { get; set; }
         public DateTime CreatedAt { get; set; }

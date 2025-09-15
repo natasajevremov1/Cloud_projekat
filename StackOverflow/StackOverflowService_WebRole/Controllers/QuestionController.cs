@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace StackOverflowService_WebRole.Controllers
 {
@@ -18,6 +16,19 @@ namespace StackOverflowService_WebRole.Controllers
         public ActionResult Index(string search = "", string sort = "")
         {
             var questions = repo.GetAllQuestions().ToList();
+            var answersRepo = new AnswersRepository(
+                System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+
+            // SINHRONIZACIJA broja odgovora
+            foreach (var q in questions)
+            {
+                var realCount = answersRepo.GetAnswersByQuestionId(q.RowKey).ToList().Count;
+                if (q.AnswersCount != realCount)
+                {
+                    q.AnswersCount = realCount;
+                    repo.UpdateQuestion(q);
+                }
+            }
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -45,59 +56,27 @@ namespace StackOverflowService_WebRole.Controllers
             return View(questions);
         }
 
-        // GET: /Question/Add
-        public ActionResult Add()
+        // GET: /Question/Details/{id}
+        public ActionResult Details(string id)
         {
-            if (Session["CurrentUser"] == null)
+            var question = repo.GetQuestionById(id);
+            if (question == null)
+                return HttpNotFound();
+
+            var answersRepo = new AnswersRepository(
+                System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+
+            var answersList = answersRepo.GetAnswersByQuestionId(id).ToList();
+            var sortedAnswers = answersList.OrderByDescending(a => a.Votes).ToList();
+
+            // SINHRONIZACIJA broja odgovora u Question
+            if (question.AnswersCount != sortedAnswers.Count)
             {
-                TempData["ErrorMessage"] = "Morate se prvo ulogovati da biste postavili pitanje.";
-                return RedirectToAction("Index", "Home");
+                question.AnswersCount = sortedAnswers.Count;
+                repo.UpdateQuestion(question);
             }
-            return View();
-        }
 
-        // POST: /Question/Add
-        [HttpPost]
-        public ActionResult Add(Question question, HttpPostedFileBase ImageFile)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = Session["CurrentUser"] as User;
-                if (user == null)
-                    return RedirectToAction("Login", "User");
-
-                question.PartitionKey = "Question";
-                question.RowKey = Guid.NewGuid().ToString();
-
-                question.AuthorEmail = user.Email; // ✅ sad koristimo Email
-                question.AuthorName = user.FirstName + " " + user.LastName;
-                question.CreatedAt = DateTime.UtcNow;
-                question.TotalVotes = 0;
-                question.AnswersCount = 0;
-
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    var storageAccount = CloudStorageAccount.Parse(
-                        System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
-                    var blobClient = storageAccount.CreateCloudBlobClient();
-                    var container = blobClient.GetContainerReference("questionimages");
-                    container.CreateIfNotExists();
-                    container.SetPermissions(new BlobContainerPermissions
-                    {
-                        PublicAccess = BlobContainerPublicAccessType.Blob
-                    });
-
-                    string fileName = question.RowKey + System.IO.Path.GetExtension(ImageFile.FileName);
-                    var blockBlob = container.GetBlockBlobReference(fileName);
-                    blockBlob.UploadFromStream(ImageFile.InputStream);
-
-                    question.ImageUrl = blockBlob.Uri.ToString();
-                }
-
-                repo.AddQuestion(question);
-                TempData["SuccessMessage"] = "Pitanje uspešno postavljeno!";
-                return RedirectToAction("Index");
-            }
+            ViewBag.Answers = sortedAnswers;
             return View(question);
         }
 
@@ -106,17 +85,20 @@ namespace StackOverflowService_WebRole.Controllers
         {
             var question = repo.GetQuestionById(id);
             var user = Session["CurrentUser"] as User;
-            if (question == null || user == null || question.AuthorEmail != user.Email) // ✅ Email check
+
+            // SAMO autor može uređivati
+            if (question == null || user == null || question.AuthorEmail != user.Email)
                 return new HttpUnauthorizedResult();
 
             return View(question);
         }
 
+        // POST: /Question/Edit
         [HttpPost]
         public ActionResult Edit(Question question, HttpPostedFileBase ImageFile)
         {
             var user = Session["CurrentUser"] as User;
-            if (user == null || question.AuthorEmail != user.Email) // ✅ Email check
+            if (user == null || question.AuthorEmail != user.Email)
                 return new HttpUnauthorizedResult();
 
             if (ModelState.IsValid)
@@ -128,9 +110,10 @@ namespace StackOverflowService_WebRole.Controllers
                 existing.Title = question.Title;
                 existing.Description = question.Description;
 
+                // Upload slike
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    var storageAccount = CloudStorageAccount.Parse(
+                    var storageAccount = Microsoft.WindowsAzure.Storage.CloudStorageAccount.Parse(
                         System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
                     var blobClient = storageAccount.CreateCloudBlobClient();
                     var container = blobClient.GetContainerReference("questionimages");
@@ -160,7 +143,8 @@ namespace StackOverflowService_WebRole.Controllers
             if (question == null)
                 return HttpNotFound();
 
-            if (user == null || question.AuthorEmail != user.Email) // ✅ Email check
+            // SAMO autor može brisati
+            if (user == null || question.AuthorEmail != user.Email)
             {
                 TempData["ErrorMessage"] = "Samo autor može brisati i menjati svoje pitanje.";
                 return RedirectToAction("Details", new { id = id });
@@ -170,27 +154,5 @@ namespace StackOverflowService_WebRole.Controllers
             TempData["SuccessMessage"] = "Pitanje uspešno obrisano.";
             return RedirectToAction("Index");
         }
-
-        // GET: /Question/Details/{id}
-        // GET: /Question/Details/{id}
-        public ActionResult Details(string id)
-        {
-            var question = repo.GetQuestionById(id);
-            if (question == null)
-                return HttpNotFound();
-
-            var answersRepo = new AnswersRepository(
-                System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
-
-            // Prvo preuzmi podatke u listu
-            var answersList = answersRepo.GetAnswersByQuestionId(id).ToList();
-
-            // Sada možeš da sortiraš
-            var sortedAnswers = answersList.OrderByDescending(a => a.Votes).ToList();
-
-            ViewBag.Answers = sortedAnswers;
-            return View(question);
-        }
-
     }
 }
