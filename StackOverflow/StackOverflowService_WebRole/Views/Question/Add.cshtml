@@ -8,7 +8,10 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <h2>Postavi pitanje</h2>
-            <form method="post" enctype="multipart/form-data">
+            @using (Html.BeginForm("Add", "Question", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken() <!-- OVO RESAVA GRESKU -->
+
                 <div class="mb-3">
                     <label for="Title" class="form-label">Naslov</label>
                     <input type="text" class="form-control" id="Title" name="Title" required />
@@ -29,12 +32,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-success">Sačuvaj</button>
-            </form>
+            }
         </div>
     </div>
 </div>
 
-<script>function previewImage(event) {
+<script>
+    function previewImage(event) {
         var reader = new FileReader();
         reader.onload = function () {
             var output = document.getElementById('imagePreview');
@@ -42,4 +46,6 @@
             output.style.display = "block";
         };
         reader.readAsDataURL(event.target.files[0]);
-    }</script>
+    }
+</script>
+

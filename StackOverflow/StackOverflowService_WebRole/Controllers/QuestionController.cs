@@ -12,6 +12,60 @@ namespace StackOverflowService_WebRole.Controllers
         private QuestionsRepository repo = new QuestionsRepository(
             System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
 
+        // GET: /Question/Add
+        public ActionResult Add()
+        {
+            var user = Session["CurrentUser"] as User;
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            return View();
+        }
+
+        // POST: /Question/Add
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Add(Question question, HttpPostedFileBase ImageFile)
+        {
+            var user = Session["CurrentUser"] as User;
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            if (ModelState.IsValid)
+            {
+                question.PartitionKey = "Question";
+                question.RowKey = Guid.NewGuid().ToString();
+                question.AuthorEmail = user.Email;
+                question.AuthorName = user.FirstName;
+                question.CreatedAt = DateTime.UtcNow;
+                question.AnswersCount = 0;
+                question.TotalVotes = 0;
+
+                // Ako se uploaduje slika
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    var storageAccount = Microsoft.WindowsAzure.Storage.CloudStorageAccount.Parse(
+                        System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+                    var blobClient = storageAccount.CreateCloudBlobClient();
+                    var container = blobClient.GetContainerReference("questionimages");
+                    container.CreateIfNotExists();
+
+                    string fileName = question.RowKey + System.IO.Path.GetExtension(ImageFile.FileName);
+                    var blockBlob = container.GetBlockBlobReference(fileName);
+                    blockBlob.UploadFromStream(ImageFile.InputStream);
+
+                    question.ImageUrl = blockBlob.Uri.ToString();
+                }
+
+                repo.AddQuestion(question);
+                TempData["SuccessMessage"] = "Pitanje uspešno dodato!";
+                return RedirectToAction("Index");
+            }
+
+            return View(question);
+        }
+
+
         // GET: /Question
         public ActionResult Index(string search = "", string sort = "")
         {

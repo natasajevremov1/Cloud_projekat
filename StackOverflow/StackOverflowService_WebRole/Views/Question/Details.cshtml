@@ -126,16 +126,35 @@
                                     {
                                         <button class="btn btn-sm btn-secondary" disabled>👍 (@ans.Votes)</button>
                                     }
-
-                                    @* Označi kao najbolji ostaje samo za autora pitanja *@
                                     @if (currentUser != null && currentUser.Email == Model.AuthorEmail)
                                     {
-                                        <form method="post" action="@Url.Action("Accept", "Answer")" style="display:inline">
-                                            @Html.Hidden("questionId", Model.RowKey)
-                                            @Html.Hidden("answerId", ans.RowKey)
-                                            <button type="submit" class="btn btn-sm btn-primary ms-2">✅ Označi kao najbolji</button>
-                                        </form>
+                                        if (!ans.IsAccepted)
+                                        {
+                                            <form method="post" action="@Url.Action("Accept", "Answer")">
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("questionId", Model.RowKey)
+                                                @Html.Hidden("answerId", ans.RowKey)
+                                                <button type="submit" class="btn btn-primary">
+                                                    ✅ Označi kao najbolji odgovor
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success" disabled>
+                                                🏅 Najbolji odgovor
+                                            </button>
+                                        }
                                     }
+                                    else if (ans.IsAccepted)
+                                    {
+                                        <button class="btn btn-success" disabled>
+                                            🏅 Najbolji odgovor
+                                        </button>
+                                    }
+
+
+
                                 </div>
                             </div>
                         }

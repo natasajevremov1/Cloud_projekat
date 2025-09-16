@@ -52,31 +52,30 @@ namespace StackOverflowService_WebRole.Controllers
         [HttpPost]
         public ActionResult Accept(string questionId, string answerId)
         {
-            var answer = repo.GetAnswerById(questionId, answerId);
-            var user = Session["CurrentUser"] as User;
+            // Uzmi connection string iz AppSettings
+            string storageConnectionString = System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"];
 
-            var questionRepo = new QuestionsRepository(
-                System.Configuration.ConfigurationManager.AppSettings["DataConnectionString"]);
+            var questionRepo = new QuestionsRepository(storageConnectionString);
+            var answerRepo = new AnswersRepository(storageConnectionString);
+
             var question = questionRepo.GetQuestionById(questionId);
+            var answer = answerRepo.GetAnswerById(questionId, answerId);
 
-            // Samo autor pitanja može označiti najbolji odgovor
-            if (question == null || user == null || question.AuthorEmail != user.Email)
+            if (question == null || answer == null)
+                return HttpNotFound();
+
+            // Dozvoljeno samo autoru pitanja
+            var currentUser = Session["CurrentUser"] as User;
+            if (currentUser == null || currentUser.Email != question.AuthorEmail)
                 return new HttpUnauthorizedResult();
 
-            // Resetuj prethodni najbolji odgovor
-            var allAnswers = repo.GetAnswersByQuestionId(questionId);
-            foreach (var ans in allAnswers)
-            {
-                ans.IsAccepted = false;
-                repo.MarkAsAccepted(ans);
-            }
-
-            // Obeleži izabrani odgovor kao najbolji
-            answer.IsAccepted = true;
-            repo.MarkAsAccepted(answer);
+            // Poništi prethodni najbolji odgovor i setuj novi
+            answerRepo.MarkAsAccepted(answer);
 
             return RedirectToAction("Details", "Question", new { id = questionId });
         }
+
+
 
     }
 }
