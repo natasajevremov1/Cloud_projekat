@@ -73,7 +73,8 @@ namespace HealthMonitoringS
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                await CheckServiceAsync("StackOverflowService", "http://localhost:5059/health-monitoring", healthTable);
+                await CheckServiceAsync("StackOverflowService", "https://localhost:44360/health-monitoring", healthTable);
+
                 await CheckServiceAsync("NotificationService", "http://localhost:5060/health-monitoring", healthTable);
 
                 await Task.Delay(4000); // 4 sekunde
