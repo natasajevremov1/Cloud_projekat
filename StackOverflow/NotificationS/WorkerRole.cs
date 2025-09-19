@@ -1,24 +1,28 @@
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage.Table;
+using NotificationS.Helper;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NotificationS
+namespace NotificationService
 {
     public class WorkerRole : RoleEntryPoint
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
+        private CloudQueue queue;
+        private CloudTable table;
+
         public override void Run()
         {
-            Trace.TraceInformation("NotificationS is running");
+            Trace.TraceInformation("NotificationService is running");
 
             try
             {
@@ -34,35 +38,46 @@ namespace NotificationS
         {
             // Use TLS 1.2 for Service Bus connections
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            // Set the maximum number of concurrent connections
             ServicePointManager.DefaultConnectionLimit = 12;
 
-            // For information on handling configuration changes
-            // see the MSDN topic at https://go.microsoft.com/fwlink/?LinkId=166357.
+            // Kreiranje queue i tabele
+            queue = QueueHelper.GetQueueReference("emails");
+            Trace.TraceInformation("Queue 'emails' ensured to exist.");
+
+            table = TableHelper.GetTable("NotificationTable");
+            Trace.TraceInformation("Table 'NotificationTable' ensured to exist.");
+
+            // Ubacivanje jednog reda u tabelu
+            var entity = new DynamicTableEntity("Partition1", Guid.NewGuid().ToString());
+            entity.Properties.Add("Message", new EntityProperty("Hello World!"));
+            var insertOperation = TableOperation.InsertOrMerge(entity);
+            table.Execute(insertOperation);
+            Trace.TraceInformation("Inserted a row into 'NotificationTable'.");
+
+            // Ubacivanje poruke u queue
+            queue.AddMessage(new CloudQueueMessage("Hello queue!"));
+            Trace.TraceInformation("Added message to 'emails' queue.");
 
             bool result = base.OnStart();
-
-            Trace.TraceInformation("NotificationS has been started");
+            Trace.TraceInformation("NotificationService has been started");
 
             return result;
         }
 
         public override void OnStop()
         {
-            Trace.TraceInformation("NotificationS is stopping");
+            Trace.TraceInformation("NotificationService is stopping");
 
             this.cancellationTokenSource.Cancel();
             this.runCompleteEvent.WaitOne();
 
             base.OnStop();
 
-            Trace.TraceInformation("NotificationS has stopped");
+            Trace.TraceInformation("NotificationService has stopped");
         }
 
         private async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO: Replace the following with your own logic.
             while (!cancellationToken.IsCancellationRequested)
             {
                 Trace.TraceInformation("Working");

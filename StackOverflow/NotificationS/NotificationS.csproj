@@ -64,6 +64,8 @@
     <Compile Include="Entities\NotificationTableEntity.cs" />
     <Compile Include="Entities\QuestionTableEntity.cs" />
     <Compile Include="Entities\UserTableEntity.cs" />
+    <Compile Include="Helper\QueueHelper.cs" />
+    <Compile Include="Helper\TableHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>

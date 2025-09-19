@@ -3,6 +3,7 @@
   <WorkerRole name="NotificationS" vmsize="Standard_D1_v2">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+		<Setting name="DataConnectionString" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
